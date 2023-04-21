@@ -10,9 +10,6 @@ self.addEventListener('install', (event) => {
 
 
 self.addEventListener('fetch', (event) => {
-    if (event.request.url.endsWith('.png')) {
-        event.respondWith(fetch(event.request));
-    } else {
         event.respondWith(
             caches.match(event.request).then((cached) => {
                 if (cached) {
@@ -31,5 +28,4 @@ self.addEventListener('fetch', (event) => {
                 });
             })
         );
-    }
 });
