@@ -11,25 +11,25 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
     if (event.request.url.endsWith('.png')) {
-        event.respondWith(
-            caches.match(event.request).then((cached) => {
-                if (cached) {
-                    return cached;
-                }
-
-                return fetch(event.request).then((networkResponse) => {
-                    // Clone the response
-                    const clonedResponse = networkResponse.clone();
-
-                    caches.open(cacheName).then((cache) => {
-                        cache.put(event.request, clonedResponse);
-                    });
-
-                    return networkResponse;
-                });
-            })
-        );
-    } else {
-        event.respondWith(fetch(event.request));
+        return event.respondWith(fetch(event.request));
     }
+
+    event.respondWith(
+        caches.match(event.request).then((cached) => {
+            if (cached) {
+                return cached;
+            }
+
+            return fetch(event.request).then((networkResponse) => {
+                // Clone the response
+                const clonedResponse = networkResponse.clone();
+
+                caches.open(cacheName).then((cache) => {
+                    cache.put(event.request, clonedResponse);
+                });
+
+                return networkResponse;
+            });
+        })
+    );
 });
